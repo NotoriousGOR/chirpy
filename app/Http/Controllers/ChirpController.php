@@ -15,8 +15,8 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Chirps/Index' [
-            //
+        return Inertia::render('Chirps/Index', [
+            "chirps" => Chirp::with("user:name")->latest()->get()
         ]);
     }
 
@@ -38,7 +38,13 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'message' => 'required|string|max:150',
+        ]);
+
+        $request->user()->chirps()->create($validated);
+
+        return redirect(route('chirps.index'));
     }
 
     /**
